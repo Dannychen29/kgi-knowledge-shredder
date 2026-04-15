@@ -131,7 +131,7 @@
     border-radius: 12px;
     padding: 28px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .panel::before {
@@ -282,7 +282,7 @@
     background: var(--border);
     border-radius: 2px;
     margin-top: 16px;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .loading-bar.active { display: block; }
@@ -345,8 +345,8 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    overflow: hidden;
-    max-height: 600px;
+    overflow-y: auto;
+    max-height: 800px;
     display: flex;
     flex-direction: column;
   }
@@ -387,7 +387,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-height: 600px;
+    max-height: 800px;
     overflow-y: auto;
   }
 
@@ -395,7 +395,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     animation: fadeUp 0.4s ease forwards;
     opacity: 0;
     transform: translateY(16px);
@@ -637,7 +637,7 @@
   <!-- ── HISTORY ── -->
   <div class="history-section">
     <div class="section-heading">Upload History</div>
-    <div class="panel" style="padding: 0; overflow: hidden;">
+    <div class="panel" style="padding: 0; overflow: visible;">
       <table class="history-table" id="historyTable">
         <thead>
           <tr>
@@ -789,7 +789,10 @@
         <div class="module-title">${m.title || 'Untitled Module'}</div>
         <div class="module-content">${m.content}</div>
         <div class="module-tags">
-          ${data.domains.map(d => `<span class="module-tag">#${d.replace(/ /g,'_')}</span>`).join('')}
+          ${data.domains && data.domains.length > 0 
+            ? data.domains.map(d => `<span class="module-tag">#${d.replace(/ /g,'_')}</span>`).join('')
+            : '<span style="color:var(--muted);font-size:11px;">No tags</span>'
+          }
         </div>
       </div>
     `).join('');

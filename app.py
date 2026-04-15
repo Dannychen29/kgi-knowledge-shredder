@@ -4,35 +4,24 @@ from gemini_service import generate_micro_modules
 import PyPDF2
 import docx
 import io
-import os
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-# Initialize database on startup
 init_db()
 
-# ─────────────────────────────────────────────
-# Helper: extract text from uploaded file
-# ─────────────────────────────────────────────
 def extract_text(file) -> str:
     filename = file.filename.lower()
-
     if filename.endswith(".pdf"):
         reader = PyPDF2.PdfReader(io.BytesIO(file.read()))
         return "\n".join(page.extract_text() or "" for page in reader.pages)
-
     elif filename.endswith(".docx"):
         doc = docx.Document(io.BytesIO(file.read()))
         return "\n".join(para.text for para in doc.paragraphs)
-
-    else:  # plain text
+    else:
         return file.read().decode("utf-8", errors="ignore")
 
 
-# ─────────────────────────────────────────────
-# Routes
-# ─────────────────────────────────────────────
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -46,27 +35,34 @@ def get_domains():
     return jsonify([dict(d) for d in domains])
 
 
+@app.route("/api/doc_domains/<int:doc_id>", methods=["GET"])
+def get_doc_domains(doc_id):
+    conn = get_connection()
+    domains = conn.execute("""
+        SELECT kd.domain_name
+        FROM Document_Domain_Map ddm
+        JOIN KnowledgeDomains kd ON ddm.domain_id = kd.domain_id
+        WHERE ddm.doc_id = ?
+    """, (doc_id,)).fetchall()
+    conn.close()
+    return jsonify([d["domain_name"] for d in domains])
+
+
 @app.route("/api/upload", methods=["POST"])
 def upload():
-    # Validate file
     if "file" not in request.files:
         return jsonify({"error": "No file provided"}), 400
-
     file = request.files["file"]
     if file.filename == "":
         return jsonify({"error": "Empty filename"}), 400
-
-    # Validate domains
     domain_ids = request.form.getlist("domain_ids")
     if not domain_ids:
         return jsonify({"error": "Please select at least one domain"}), 400
 
-    # Extract text
     raw_text = extract_text(file)
     if not raw_text.strip():
         return jsonify({"error": "Could not extract text from file"}), 400
 
-    # Get domain names for prompt
     conn = get_connection()
     placeholders = ",".join("?" * len(domain_ids))
     domain_rows = conn.execute(
@@ -75,7 +71,6 @@ def upload():
     ).fetchall()
     domain_names = [r["domain_name"] for r in domain_rows]
 
-    # Save source document
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO SourceDocuments (file_name, raw_text) VALUES (?, ?)",
@@ -83,25 +78,20 @@ def upload():
     )
     doc_id = cursor.lastrowid
 
-    # Save domain mappings
     for domain_id in domain_ids:
         cursor.execute(
             "INSERT INTO Document_Domain_Map (doc_id, domain_id) VALUES (?, ?)",
             (doc_id, domain_id)
         )
-
     conn.commit()
 
-    # Generate micro-modules via Gemini
     modules = generate_micro_modules(raw_text, domain_names)
 
-    # Save micro-modules
     for m in modules:
         cursor.execute(
             "INSERT INTO MicroModules (doc_id, module_title, module_content, reading_time_minutes) VALUES (?, ?, ?, ?)",
             (doc_id, m.get("title", "Module"), m.get("content", ""), m.get("reading_time_minutes", 2))
         )
-
     conn.commit()
     conn.close()
 
