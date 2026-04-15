@@ -46,7 +46,7 @@ KnowledgeDomains        SourceDocuments
 |-------|-----------|
 | Backend | Python 3.12 + Flask |
 | Database | SQLite |
-| AI | Google Gemini 1.5 Flash API |
+| AI | Google Gemini 2.5 Flash API |
 | Frontend | HTML + CSS + JavaScript |
 | File Parsing | PyPDF2, python-docx |
 
