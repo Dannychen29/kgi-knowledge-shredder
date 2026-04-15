@@ -1,11 +1,18 @@
 import google.generativeai as genai
 import json
 import re
+import os
+from dotenv import load_dotenv
 
-API_KEY = "AIzaSyAYk6uuTpM2F7P7U-zqwvtC_luodG-zFKY"
+# Load API key from .env file
+load_dotenv()
+API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not API_KEY:
+    raise ValueError("GEMINI_API_KEY not found. Please create a .env file with your API key.")
 
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel("gemini-flash-lite-latest")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 def generate_micro_modules(raw_text: str, domains: list[str]) -> list[dict]:
     domain_str = ", ".join(domains)
