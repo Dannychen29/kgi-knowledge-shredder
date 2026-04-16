@@ -62,7 +62,7 @@ cd kgi-knowledge-shredder
 
 ### 2. Install dependencies
 ```bash
-pip install flask google-generativeai python-docx PyPDF2 python-dotenv
+pip install flask google-genai python-docx PyPDF2 python-dotenv
 ```
 
 ### 3. Add your Gemini API Key
