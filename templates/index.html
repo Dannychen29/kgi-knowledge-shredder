@@ -602,15 +602,23 @@
         <!-- Populated via JS -->
       </div>
       <div class="status-msg" id="domainStatus">Loading domains...</div>
+      <div style="margin-top:12px; padding: 10px 14px; background: rgba(0,229,255,0.06); border: 1px solid var(--tag-border); border-radius: 6px; font-size: 11px; color: var(--muted); line-height: 1.6;">
+        💡 <strong style="color:var(--accent)">Step 1:</strong> Upload a file &nbsp;|&nbsp;
+        <strong style="color:var(--accent)">Step 2:</strong> Click at least one domain tag above &nbsp;|&nbsp;
+        <strong style="color:var(--accent)">Step 3:</strong> Press SHRED to generate modules
+      </div>
     </div>
 
   </div>
 
   <!-- Process Button -->
-  <button class="process-btn" id="processBtn" disabled>
+  <button class="process-btn" id="processBtn" disabled title="Upload a file and select at least one domain to enable">
     <span>⚡</span>
     <span id="btnText">SHRED & GENERATE MODULES</span>
   </button>
+  <div id="readyHint" style="text-align:center; margin-top:8px; font-size:11px; color:var(--accent2); min-height:16px;">
+    ⚠ Please upload a file and select at least one domain tag to continue
+  </div>
   <div class="loading-bar" id="loadingBar"></div>
   <div class="status-msg" id="statusMsg"></div>
 
@@ -729,7 +737,22 @@
 
   function checkReady() {
     const btn = document.getElementById('processBtn');
-    btn.disabled = !(selectedFile && selectedDomains.size > 0);
+    const hint = document.getElementById('readyHint');
+    const ready = selectedFile && selectedDomains.size > 0;
+    btn.disabled = !ready;
+    if (ready) {
+      hint.textContent = '✓ Ready! Press SHRED to generate your micro-modules.';
+      hint.style.color = 'var(--accent3)';
+    } else if (!selectedFile && selectedDomains.size === 0) {
+      hint.textContent = '⚠ Please upload a file and select at least one domain tag to continue';
+      hint.style.color = 'var(--accent2)';
+    } else if (!selectedFile) {
+      hint.textContent = '⚠ Please upload a file to continue';
+      hint.style.color = 'var(--accent2)';
+    } else {
+      hint.textContent = '⚠ Please select at least one domain tag to continue';
+      hint.style.color = 'var(--accent2)';
+    }
   }
 
   // ── PROCESS ──
