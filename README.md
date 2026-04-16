@@ -18,7 +18,7 @@ This system lets trainers upload documents, tag them with knowledge domains, and
 
 - **Document Upload** — Supports PDF, DOCX, and TXT formats
 - **Domain Tagging** — Multi-select knowledge domain tags (Life Insurance, CRM, Compliance, etc.)
-- **AI Generation** — Gemini 1.5 Flash automatically chunks content into 2-minute learning sprints
+- **AI Generation** — Gemini 2.5 Flash automatically chunks content into 2-minute learning sprints
 - **Split-Screen Preview** — Raw source text on the left, generated modules on the right
 - **Upload History** — View all previously processed documents and their modules
 - **SQLite Database** — Full relational schema with Many-to-Many domain mapping
@@ -62,13 +62,13 @@ cd kgi-knowledge-shredder
 
 ### 2. Install dependencies
 ```bash
-pip install flask google-generativeai python-docx PyPDF2
+pip install flask google-generativeai python-docx PyPDF2 python-dotenv
 ```
 
 ### 3. Add your Gemini API Key
-Open `gemini_service.py` and replace the API key:
-```python
-API_KEY = "your-gemini-api-key-here"
+Create a `.env` file in the project root:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 Get a free key at: https://aistudio.google.com/apikey
 
