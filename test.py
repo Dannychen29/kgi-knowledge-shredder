@@ -3,7 +3,7 @@ import os
 
 # 將你提供的 API Key 填入此處
 # 注意：你提供的這串字元看起來是不完整的，正式的 Google API Key 通常有 39 個字元
-API_KEY = "AIzaSyAYk6uuTpM2F7P7U-zqwvtC_luodG-zFKY" 
+API_KEY = "AIzaSyBX3pPWwjU65Tc_wzOqjpzP4uYXg32los4" 
 
 # 設定 API Key
 genai.configure(api_key=API_KEY)

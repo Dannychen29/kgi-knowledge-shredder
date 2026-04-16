@@ -12,7 +12,7 @@ if not API_KEY:
     raise ValueError("GEMINI_API_KEY not found. Please create a .env file with your API key.")
 
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel("gemini-2.5-flash")
+model = genai.GenerativeModel("models/gemini-2.5-flash")
 
 def generate_micro_modules(raw_text: str, domains: list[str]) -> list[dict]:
     domain_str = ", ".join(domains)
