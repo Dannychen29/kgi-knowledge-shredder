@@ -84,7 +84,8 @@
   .quiz-toggle { font-size: 10px; }
   .quiz-body { padding: 12px 20px 16px; }
   .quiz-q { font-size: 12px; color: var(--text); margin-bottom: 10px; line-height: 1.6; }
-  .quiz-option { font-size: 11px; color: #8090a8; padding: 4px 0; line-height: 1.6; }
+  .quiz-option-btn { font-size: 11px; color: #8090a8; padding: 8px 12px; line-height: 1.6; border: 1px solid var(--border); border-radius: 6px; margin: 4px 0; cursor: pointer; transition: all 0.15s ease; }
+  .quiz-option-btn:hover { border-color: var(--accent); color: var(--text); background: rgba(0,229,255,0.05); }
   .quiz-answer { margin-top: 10px; padding: 8px 12px; background: rgba(184,255,87,0.1); border: 1px solid var(--accent3); border-radius: 6px; font-size: 12px; color: var(--accent3); }
   .quiz-reveal-btn { margin-top: 10px; padding: 6px 16px; background: transparent; border: 1px solid var(--accent2); border-radius: 4px; color: var(--accent2); cursor: pointer; font-size: 11px; font-family: 'DM Mono', monospace; }
   .quiz-reveal-btn:hover { background: rgba(255,77,109,0.1); }
@@ -115,6 +116,10 @@
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
   @media (max-width: 900px) { .upload-section, .split-screen { grid-template-columns: 1fr; } header { padding: 16px 20px; } main { padding: 24px 20px 60px; } .page-title { font-size: 28px; } }
+.session-stats { text-align: center; margin-top: 8px; font-size: 11px; color: var(--muted); display: flex; justify-content: center; gap: 12px; }
+  .stat-divider { color: var(--border); }
+  #statCorrect { color: var(--accent3); }
+  #statAccuracy { color: var(--accent); }  
 </style>
 </head>
 <body>
@@ -151,6 +156,13 @@
     <span>⚡</span><span id="btnText">SHRED & GENERATE MODULES</span>
   </button>
   <div class="ready-hint" id="readyHint">⚠ Upload a file and select at least one domain to continue</div>
+  <div class="session-stats" id="sessionStats" style="display:none">
+    <span id="statModules">0 modules</span>
+    <span class="stat-divider">·</span>
+    <span id="statCorrect">0 correct</span>
+    <span class="stat-divider">·</span>
+    <span id="statAccuracy">0% accuracy</span>
+  </div>
   <div class="loading-bar" id="loadingBar"></div>
   <div class="status-msg" id="statusMsg"></div>
   <div class="preview-section" id="previewSection">
@@ -190,6 +202,7 @@
 <script>
   let selectedDomains = new Set();
   let selectedFile = null;
+  let quizStats = { total: 0, correct: 0 };
 
   function showToast(msg, type = 'success') {
     const t = document.getElementById('toast');
@@ -333,9 +346,13 @@
           '<div class="quiz-question" onclick="toggleQuiz(' + i + ')">🧠 Test Yourself <span class="quiz-toggle">▼</span></div>' +
           '<div class="quiz-body" id="quiz-body-' + i + '" style="display:none">' +
           '<div class="quiz-q">' + m.quiz.question + '</div>' +
-          m.quiz.options.map(o => '<div class="quiz-option">' + o + '</div>').join('') +
-          '<div class="quiz-answer" id="quiz-ans-' + i + '" style="display:none">Answer: ' + m.quiz.answer + '</div>' +
-          '<button class="quiz-reveal-btn" onclick="revealAnswer(' + i + ')">Reveal Answer</button>' +
+          '<div id="quiz-options-' + i + '">' +
+          m.quiz.options.map(o => {
+            const letter = o.charAt(0);
+            return '<div class="quiz-option-btn" onclick="selectOption(' + i + ', \'' + letter + '\', \'' + m.quiz.answer + '\')">' + o + '</div>';
+          }).join('') +
+          '</div>' +
+          '<div class="quiz-answer" id="quiz-ans-' + i + '" style="display:none"></div>' +
           '</div></div>'
         : '';
       return '<div class="module-card" style="animation-delay:' + (i*0.08) + 's">' +
@@ -390,8 +407,44 @@
     else { body.style.display = 'none'; toggle.textContent = '▼'; }
   }
 
-  function revealAnswer(i) {
-    document.getElementById('quiz-ans-' + i).style.display = 'block';
+  function selectOption(i, selected, correct) {
+    const optEls = document.querySelectorAll('#quiz-options-' + i + ' .quiz-option-btn');
+    optEls.forEach(el => {
+      el.style.pointerEvents = 'none';
+      const letter = el.textContent.trim().charAt(0);
+      if (letter === correct) {
+        el.style.background = 'rgba(184,255,87,0.15)';
+        el.style.borderColor = 'var(--accent3)';
+        el.style.color = 'var(--accent3)';
+      } else if (letter === selected) {
+        el.style.background = 'rgba(255,77,109,0.15)';
+        el.style.borderColor = 'var(--accent2)';
+        el.style.color = 'var(--accent2)';
+      }
+    });
+    const ansEl = document.getElementById('quiz-ans-' + i);
+    ansEl.style.display = 'block';
+    quizStats.total++;
+    if (selected === correct) {
+      quizStats.correct++;
+      ansEl.style.borderColor = 'var(--accent3)';
+      ansEl.style.color = 'var(--accent3)';
+      ansEl.textContent = 'Correct! The answer is ' + correct;
+    } else {
+      ansEl.style.borderColor = 'var(--accent2)';
+      ansEl.style.color = 'var(--accent2)';
+      ansEl.textContent = 'Incorrect. The correct answer is ' + correct;
+    }
+    updateStats();
+  }
+
+  function updateStats() {
+    const stats = document.getElementById('sessionStats');
+    stats.style.display = 'flex';
+    document.getElementById('statModules').textContent = quizStats.total + ' answered';
+    document.getElementById('statCorrect').textContent = quizStats.correct + ' correct';
+    const pct = quizStats.total > 0 ? Math.round(quizStats.correct / quizStats.total * 100) : 0;
+    document.getElementById('statAccuracy').textContent = pct + '% accuracy';
   }
 
   loadDomains();
