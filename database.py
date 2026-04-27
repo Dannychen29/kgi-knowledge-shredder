@@ -41,6 +41,7 @@ def init_db():
             module_title TEXT,
             module_content TEXT NOT NULL,
             reading_time_minutes REAL DEFAULT 2.0,
+            status TEXT DEFAULT 'draft',
             FOREIGN KEY (doc_id) REFERENCES SourceDocuments(doc_id)
         );
     """)

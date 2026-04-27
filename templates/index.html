@@ -51,6 +51,10 @@
   .process-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; }
   .ready-hint { text-align: center; margin-top: 8px; font-size: 11px; min-height: 16px; color: var(--accent2); }
   .ready-hint.ready { color: var(--accent3); }
+  .session-stats { text-align: center; margin-top: 8px; font-size: 11px; color: var(--muted); display: none; justify-content: center; gap: 12px; }
+  .stat-divider { color: var(--border); }
+  #statCorrect { color: var(--accent3); }
+  #statAccuracy { color: var(--accent); }
   .loading-bar { display: none; height: 3px; background: var(--border); border-radius: 2px; margin-top: 16px; overflow: hidden; }
   .loading-bar.active { display: block; }
   .loading-bar::after { content: ''; display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); animation: loading 1.5s ease-in-out infinite; width: 40%; }
@@ -68,13 +72,14 @@
   .modules-panel { display: flex; flex-direction: column; gap: 16px; max-height: 800px; overflow-y: auto; padding-right: 4px; }
   .module-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; animation: fadeUp 0.4s ease forwards; opacity: 0; transform: translateY(16px); flex-shrink: 0; }
   @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-  .module-card-header { padding: 14px 20px; background: var(--surface2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .module-card-header { padding: 14px 20px; background: var(--surface2); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
   .module-number { font-size: 10px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
-  .module-time { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .module-time { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; margin-left: auto; }
+  .module-status { font-size: 10px; padding: 2px 8px; border-radius: 99px; }
+  .module-status.draft { background: rgba(255,77,109,0.15); color: var(--accent2); border: 1px solid rgba(255,77,109,0.3); }
+  .module-status.approved { background: rgba(184,255,87,0.15); color: var(--accent3); border: 1px solid rgba(184,255,87,0.3); }
   .module-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 16px 20px 8px; color: var(--text); }
   .module-content { padding: 0 20px 12px; font-size: 12px; line-height: 1.8; color: #8090a8; }
-  .module-tags { padding: 8px 20px 16px; display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--border); }
-  .module-tag { font-size: 10px; padding: 3px 10px; border-radius: 99px; background: var(--tag-bg); border: 1px solid var(--tag-border); color: var(--accent); letter-spacing: 0.5px; }
   .module-takeaways { padding: 10px 20px 14px; border-top: 1px solid var(--border); }
   .takeaways-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent3); margin-bottom: 8px; }
   .takeaway-item { font-size: 12px; color: #8090a8; line-height: 1.8; padding: 2px 0; }
@@ -87,8 +92,14 @@
   .quiz-option-btn { font-size: 11px; color: #8090a8; padding: 8px 12px; line-height: 1.6; border: 1px solid var(--border); border-radius: 6px; margin: 4px 0; cursor: pointer; transition: all 0.15s ease; }
   .quiz-option-btn:hover { border-color: var(--accent); color: var(--text); background: rgba(0,229,255,0.05); }
   .quiz-answer { margin-top: 10px; padding: 8px 12px; background: rgba(184,255,87,0.1); border: 1px solid var(--accent3); border-radius: 6px; font-size: 12px; color: var(--accent3); }
-  .quiz-reveal-btn { margin-top: 10px; padding: 6px 16px; background: transparent; border: 1px solid var(--accent2); border-radius: 4px; color: var(--accent2); cursor: pointer; font-size: 11px; font-family: 'DM Mono', monospace; }
-  .quiz-reveal-btn:hover { background: rgba(255,77,109,0.1); }
+  .module-tags { padding: 8px 20px 16px; display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--border); }
+  .module-tag { font-size: 10px; padding: 3px 10px; border-radius: 99px; background: var(--tag-bg); border: 1px solid var(--tag-border); color: var(--accent); letter-spacing: 0.5px; }
+  .module-approve-bar { padding: 10px 20px 16px; display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border); }
+  .approve-btn { padding: 6px 16px; background: transparent; border: 1px solid var(--accent3); border-radius: 4px; color: var(--accent3); cursor: pointer; font-size: 11px; font-family: 'DM Mono', monospace; transition: all 0.15s ease; }
+  .approve-btn:hover { background: rgba(184,255,87,0.1); }
+  .approve-btn:disabled { border-color: var(--border); color: var(--muted); cursor: not-allowed; background: transparent; }
+  .approve-hint { font-size: 10px; color: var(--muted); }
+  .ai-warning { margin-bottom: 12px; padding: 10px 16px; background: rgba(255,77,109,0.08); border: 1px solid rgba(255,77,109,0.3); border-radius: 6px; font-size: 11px; color: var(--accent2); }
   .browse-section { margin-top: 48px; }
   .browse-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
   .browse-chip { padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; font-size: 12px; color: var(--muted); transition: all 0.15s ease; font-family: 'DM Mono', monospace; }
@@ -116,10 +127,6 @@
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
   @media (max-width: 900px) { .upload-section, .split-screen { grid-template-columns: 1fr; } header { padding: 16px 20px; } main { padding: 24px 20px 60px; } .page-title { font-size: 28px; } }
-.session-stats { text-align: center; margin-top: 8px; font-size: 11px; color: var(--muted); display: flex; justify-content: center; gap: 12px; }
-  .stat-divider { color: var(--border); }
-  #statCorrect { color: var(--accent3); }
-  #statAccuracy { color: var(--accent); }  
 </style>
 </head>
 <body>
@@ -156,8 +163,8 @@
     <span>⚡</span><span id="btnText">SHRED & GENERATE MODULES</span>
   </button>
   <div class="ready-hint" id="readyHint">⚠ Upload a file and select at least one domain to continue</div>
-  <div class="session-stats" id="sessionStats" style="display:none">
-    <span id="statModules">0 modules</span>
+  <div class="session-stats" id="sessionStats">
+    <span id="statModules">0 answered</span>
     <span class="stat-divider">·</span>
     <span id="statCorrect">0 correct</span>
     <span class="stat-divider">·</span>
@@ -250,7 +257,8 @@
       } else {
         panel.innerHTML = modules.map((m, i) =>
           '<div class="module-card" style="animation-delay:' + (i*0.05) + 's">' +
-          '<div class="module-card-header"><span class="module-number">' + m.file_name.substring(0,30) + '...</span><span class="module-time">⏱ ' + m.reading_time_minutes + ' min</span></div>' +
+          '<div class="module-card-header"><span class="module-number">' + m.file_name.substring(0,30) + '...</span><span class="module-time">⏱ ' + m.reading_time_minutes + ' min</span>' +
+          '<span class="module-status ' + (m.status||'draft') + '">● ' + (m.status === 'approved' ? 'Approved' : 'Draft') + '</span></div>' +
           '<div class="module-title">' + (m.module_title||'Untitled') + '</div>' +
           '<div class="module-content">' + m.module_content + '</div>' +
           '<div class="module-tags"><span class="module-tag">#' + domainName.replace(/ /g,'_') + '</span></div>' +
@@ -322,6 +330,7 @@
       bar.classList.remove('active'); btn.disabled = false;
       btnText.textContent = 'SHRED & GENERATE MODULES';
       msg.textContent = 'Generated ' + data.modules.length + ' micro-modules from "' + data.file_name + '"';
+      quizStats = { total: 0, correct: 0 };
       renderPreview(data); loadHistory();
       showToast(data.modules.length + ' modules generated!', 'success');
     } catch (e) {
@@ -336,34 +345,90 @@
     document.getElementById('previewSection').classList.add('visible');
     document.getElementById('rawTextContent').textContent = data.raw_text;
     const panel = document.getElementById('modulesPanel');
-    panel.innerHTML = data.modules.map((m, i) => {
-      const takeaways = m.key_takeaways && m.key_takeaways.length > 0
-        ? '<div class="module-takeaways"><div class="takeaways-title">⚡ Key Takeaways</div>' +
-          m.key_takeaways.map(t => '<div class="takeaway-item">▸ ' + t + '</div>').join('') + '</div>'
-        : '';
-      const quiz = m.quiz
-        ? '<div class="module-quiz" id="quiz-' + i + '">' +
-          '<div class="quiz-question" onclick="toggleQuiz(' + i + ')">🧠 Test Yourself <span class="quiz-toggle">▼</span></div>' +
-          '<div class="quiz-body" id="quiz-body-' + i + '" style="display:none">' +
-          '<div class="quiz-q">' + m.quiz.question + '</div>' +
-          '<div id="quiz-options-' + i + '">' +
-          m.quiz.options.map(o => {
-            const letter = o.charAt(0);
-            return '<div class="quiz-option-btn" onclick="selectOption(' + i + ', \'' + letter + '\', \'' + m.quiz.answer + '\')">' + o + '</div>';
-          }).join('') +
-          '</div>' +
-          '<div class="quiz-answer" id="quiz-ans-' + i + '" style="display:none"></div>' +
-          '</div></div>'
-        : '';
-      return '<div class="module-card" style="animation-delay:' + (i*0.08) + 's">' +
-        '<div class="module-card-header"><span class="module-number">MODULE ' + String(i+1).padStart(2,'0') + '</span><span class="module-time">⏱ ' + m.reading_time_minutes + ' min</span></div>' +
-        '<div class="module-title">' + (m.title || 'Untitled') + '</div>' +
-        '<div class="module-content">' + m.content + '</div>' +
-        takeaways + quiz +
-        '<div class="module-tags">' + data.domains.map(d => '<span class="module-tag">#' + d.replace(/ /g,'_') + '</span>').join('') + '</div>' +
-        '</div>';
-    }).join('');
+    panel.innerHTML =
+      '<div class="ai-warning">⚠ AI-generated content — please review for accuracy before approving for use.</div>' +
+      data.modules.map((m, i) => {
+        const takeaways = m.key_takeaways && m.key_takeaways.length > 0
+          ? '<div class="module-takeaways"><div class="takeaways-title">⚡ Key Takeaways</div>' +
+            m.key_takeaways.map(t => '<div class="takeaway-item">▸ ' + t + '</div>').join('') + '</div>'
+          : '';
+        const quiz = m.quiz
+          ? '<div class="module-quiz" id="quiz-' + i + '">' +
+            '<div class="quiz-question" onclick="toggleQuiz(' + i + ')">🧠 Test Yourself <span class="quiz-toggle">▼</span></div>' +
+            '<div class="quiz-body" id="quiz-body-' + i + '" style="display:none">' +
+            '<div class="quiz-q">' + m.quiz.question + '</div>' +
+            '<div id="quiz-options-' + i + '">' +
+            m.quiz.options.map(o => {
+              const letter = o.charAt(0);
+              return '<div class="quiz-option-btn" onclick="selectOption(' + i + ', \'' + letter + '\', \'' + m.quiz.answer + '\')">' + o + '</div>';
+            }).join('') +
+            '</div>' +
+            '<div class="quiz-answer" id="quiz-ans-' + i + '" style="display:none"></div>' +
+            '</div></div>'
+          : '';
+        return '<div class="module-card" style="animation-delay:' + (i*0.08) + 's" id="module-card-' + i + '">' +
+          '<div class="module-card-header"><span class="module-number">MODULE ' + String(i+1).padStart(2,'0') + '</span><span class="module-time">⏱ ' + m.reading_time_minutes + ' min</span><span class="module-status draft" id="status-' + i + '">● Draft</span></div>' +
+          '<div class="module-title">' + (m.title || 'Untitled') + '</div>' +
+          '<div class="module-content">' + m.content + '</div>' +
+          takeaways + quiz +
+          '<div class="module-tags">' + data.domains.map(d => '<span class="module-tag">#' + d.replace(/ /g,'_') + '</span>').join('') + '</div>' +
+          '<div class="module-approve-bar"><button class="approve-btn" id="approve-btn-' + i + '" onclick="approveModule(' + i + ', ' + data.doc_id + ')">✓ Approve for Use</button><span class="approve-hint">Trainer review required before publishing</span></div>' +
+          '</div>';
+      }).join('');
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function selectOption(i, selected, correct) {
+    const optEls = document.querySelectorAll('#quiz-options-' + i + ' .quiz-option-btn');
+    optEls.forEach(el => {
+      el.style.pointerEvents = 'none';
+      const letter = el.textContent.trim().charAt(0);
+      if (letter === correct) { el.style.background = 'rgba(184,255,87,0.15)'; el.style.borderColor = 'var(--accent3)'; el.style.color = 'var(--accent3)'; }
+      else if (letter === selected) { el.style.background = 'rgba(255,77,109,0.15)'; el.style.borderColor = 'var(--accent2)'; el.style.color = 'var(--accent2)'; }
+    });
+    const ansEl = document.getElementById('quiz-ans-' + i);
+    ansEl.style.display = 'block';
+    quizStats.total++;
+    if (selected === correct) {
+      quizStats.correct++;
+      ansEl.style.borderColor = 'var(--accent3)'; ansEl.style.color = 'var(--accent3)';
+      ansEl.textContent = 'Correct! The answer is ' + correct;
+    } else {
+      ansEl.style.borderColor = 'var(--accent2)'; ansEl.style.color = 'var(--accent2)';
+      ansEl.textContent = 'Incorrect. The correct answer is ' + correct;
+    }
+    updateStats();
+  }
+
+  function updateStats() {
+    const stats = document.getElementById('sessionStats');
+    stats.style.display = 'flex';
+    document.getElementById('statModules').textContent = quizStats.total + ' answered';
+    document.getElementById('statCorrect').textContent = quizStats.correct + ' correct';
+    const pct = quizStats.total > 0 ? Math.round(quizStats.correct / quizStats.total * 100) : 0;
+    document.getElementById('statAccuracy').textContent = pct + '% accuracy';
+  }
+
+  async function approveModule(index, docId) {
+    try {
+      const res = await fetch('/api/modules/' + docId + '/approve_index/' + index, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('status-' + index).textContent = '● Approved';
+        document.getElementById('status-' + index).className = 'module-status approved';
+        const btn = document.getElementById('approve-btn-' + index);
+        btn.textContent = '✓ Approved';
+        btn.disabled = true;
+        showToast('Module approved!', 'success');
+      }
+    } catch (e) { showToast('Failed to approve', 'error'); }
+  }
+
+  function toggleQuiz(i) {
+    const body = document.getElementById('quiz-body-' + i);
+    const toggle = document.querySelector('#quiz-' + i + ' .quiz-toggle');
+    if (body.style.display === 'none') { body.style.display = 'block'; toggle.textContent = '▲'; }
+    else { body.style.display = 'none'; toggle.textContent = '▼'; }
   }
 
   async function loadHistory() {
@@ -390,7 +455,8 @@
       const panel = document.getElementById('modulesPanel');
       panel.innerHTML = modules.map((m, i) =>
         '<div class="module-card" style="animation-delay:' + (i*0.08) + 's">' +
-        '<div class="module-card-header"><span class="module-number">MODULE ' + String(i+1).padStart(2,'0') + '</span><span class="module-time">⏱ ' + m.reading_time_minutes + ' min</span></div>' +
+        '<div class="module-card-header"><span class="module-number">MODULE ' + String(i+1).padStart(2,'0') + '</span><span class="module-time">⏱ ' + m.reading_time_minutes + ' min</span>' +
+        '<span class="module-status ' + (m.status||'draft') + '">● ' + (m.status === 'approved' ? 'Approved' : 'Draft') + '</span></div>' +
         '<div class="module-title">' + (m.module_title||'Untitled') + '</div>' +
         '<div class="module-content">' + m.module_content + '</div>' +
         '<div class="module-tags">' + domains.map(d => '<span class="module-tag">#' + d.replace(/ /g,'_') + '</span>').join('') + '</div>' +
@@ -398,53 +464,6 @@
       ).join('');
       panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (e) { showToast('Failed to load modules', 'error'); }
-  }
-
-  function toggleQuiz(i) {
-    const body = document.getElementById('quiz-body-' + i);
-    const toggle = document.querySelector('#quiz-' + i + ' .quiz-toggle');
-    if (body.style.display === 'none') { body.style.display = 'block'; toggle.textContent = '▲'; }
-    else { body.style.display = 'none'; toggle.textContent = '▼'; }
-  }
-
-  function selectOption(i, selected, correct) {
-    const optEls = document.querySelectorAll('#quiz-options-' + i + ' .quiz-option-btn');
-    optEls.forEach(el => {
-      el.style.pointerEvents = 'none';
-      const letter = el.textContent.trim().charAt(0);
-      if (letter === correct) {
-        el.style.background = 'rgba(184,255,87,0.15)';
-        el.style.borderColor = 'var(--accent3)';
-        el.style.color = 'var(--accent3)';
-      } else if (letter === selected) {
-        el.style.background = 'rgba(255,77,109,0.15)';
-        el.style.borderColor = 'var(--accent2)';
-        el.style.color = 'var(--accent2)';
-      }
-    });
-    const ansEl = document.getElementById('quiz-ans-' + i);
-    ansEl.style.display = 'block';
-    quizStats.total++;
-    if (selected === correct) {
-      quizStats.correct++;
-      ansEl.style.borderColor = 'var(--accent3)';
-      ansEl.style.color = 'var(--accent3)';
-      ansEl.textContent = 'Correct! The answer is ' + correct;
-    } else {
-      ansEl.style.borderColor = 'var(--accent2)';
-      ansEl.style.color = 'var(--accent2)';
-      ansEl.textContent = 'Incorrect. The correct answer is ' + correct;
-    }
-    updateStats();
-  }
-
-  function updateStats() {
-    const stats = document.getElementById('sessionStats');
-    stats.style.display = 'flex';
-    document.getElementById('statModules').textContent = quizStats.total + ' answered';
-    document.getElementById('statCorrect').textContent = quizStats.correct + ' correct';
-    const pct = quizStats.total > 0 ? Math.round(quizStats.correct / quizStats.total * 100) : 0;
-    document.getElementById('statAccuracy').textContent = pct + '% accuracy';
   }
 
   loadDomains();

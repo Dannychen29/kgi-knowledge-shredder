@@ -21,11 +21,9 @@ def extract_text(file) -> str:
     else:
         return file.read().decode("utf-8", errors="ignore")
 
-
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 @app.route("/api/domains", methods=["GET"])
 def get_domains():
@@ -33,7 +31,6 @@ def get_domains():
     domains = conn.execute("SELECT domain_id, domain_name, description FROM KnowledgeDomains").fetchall()
     conn.close()
     return jsonify([dict(d) for d in domains])
-
 
 @app.route("/api/doc_domains/<int:doc_id>", methods=["GET"])
 def get_doc_domains(doc_id):
@@ -46,7 +43,6 @@ def get_doc_domains(doc_id):
     """, (doc_id,)).fetchall()
     conn.close()
     return jsonify([d["domain_name"] for d in domains])
-
 
 @app.route("/api/upload", methods=["POST"])
 def upload():
@@ -89,8 +85,8 @@ def upload():
 
     for m in modules:
         cursor.execute(
-            "INSERT INTO MicroModules (doc_id, module_title, module_content, reading_time_minutes) VALUES (?, ?, ?, ?)",
-            (doc_id, m.get("title", "Module"), m.get("content", ""), m.get("reading_time_minutes", 2))
+            "INSERT INTO MicroModules (doc_id, module_title, module_content, reading_time_minutes, status) VALUES (?, ?, ?, ?, ?)",
+            (doc_id, m.get("title", "Module"), m.get("content", ""), m.get("reading_time_minutes", 2), "draft")
         )
     conn.commit()
     conn.close()
@@ -102,7 +98,6 @@ def upload():
         "raw_text": raw_text,
         "modules": modules
     })
-
 
 @app.route("/api/history", methods=["GET"])
 def history():
@@ -118,7 +113,6 @@ def history():
     """).fetchall()
     conn.close()
     return jsonify([dict(d) for d in docs])
-
 
 @app.route("/api/modules/<int:doc_id>", methods=["GET"])
 def get_modules(doc_id):
@@ -144,6 +138,19 @@ def get_modules_by_domain(domain_id):
     conn.close()
     return jsonify([dict(m) for m in modules])
 
+@app.route("/api/modules/<int:doc_id>/approve_index/<int:index>", methods=["POST"])
+def approve_module(doc_id, index):
+    conn = get_connection()
+    modules = conn.execute(
+        "SELECT module_id FROM MicroModules WHERE doc_id = ? ORDER BY module_id ASC",
+        (doc_id,)
+    ).fetchall()
+    if index < len(modules):
+        module_id = modules[index]["module_id"]
+        conn.execute("UPDATE MicroModules SET status = 'approved' WHERE module_id = ?", (module_id,))
+        conn.commit()
+    conn.close()
+    return jsonify({"success": True})
 
 if __name__ == "__main__":
     app.run(debug=True)
