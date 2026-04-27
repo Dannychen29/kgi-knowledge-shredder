@@ -129,6 +129,21 @@ def get_modules(doc_id):
     conn.close()
     return jsonify([dict(m) for m in modules])
 
+@app.route("/api/modules_by_domain/<int:domain_id>", methods=["GET"])
+def get_modules_by_domain(domain_id):
+    conn = get_connection()
+    modules = conn.execute("""
+        SELECT mm.*, sd.file_name, kd.domain_name
+        FROM MicroModules mm
+        JOIN SourceDocuments sd ON mm.doc_id = sd.doc_id
+        JOIN Document_Domain_Map ddm ON sd.doc_id = ddm.doc_id
+        JOIN KnowledgeDomains kd ON ddm.domain_id = kd.domain_id
+        WHERE ddm.domain_id = ?
+        ORDER BY mm.module_id DESC
+    """, (domain_id,)).fetchall()
+    conn.close()
+    return jsonify([dict(m) for m in modules])
+
 
 if __name__ == "__main__":
     app.run(debug=True)

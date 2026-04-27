@@ -1,3 +1,4 @@
+```markdown
 # KGI Knowledge Shredder
 
 A micro-learning web application that automatically breaks down training documents into 2-minute learning sprints using AI — built for KGI Financial Holdings.
@@ -19,23 +20,20 @@ This system lets trainers upload documents, tag them with knowledge domains, and
 - **Document Upload** — Supports PDF, DOCX, and TXT formats
 - **Domain Tagging** — Multi-select knowledge domain tags (Life Insurance, CRM, Compliance, etc.)
 - **AI Generation** — Gemini 2.5 Flash automatically chunks content into 2-minute learning sprints
+- **Key Takeaways** — Each module includes 3 highlighted key points for quick review
+- **Quiz** — Each module includes an AI-generated multiple choice question to test understanding
 - **Split-Screen Preview** — Raw source text on the left, generated modules on the right
+- **Browse by Domain** — Cross-document knowledge browsing by domain tag
 - **Upload History** — View all previously processed documents and their modules
 - **SQLite Database** — Full relational schema with Many-to-Many domain mapping
 
 ---
 
 ## Database Schema
-
 ```
-KnowledgeDomains        SourceDocuments
-(domain dictionary)     (uploaded files)
-         \               /
-          Document_Domain_Map
-          (junction table)
-                 |
-            MicroModules
-            (AI-generated output)
+
+KnowledgeDomains SourceDocuments (domain dictionary) (uploaded files) \ / Document_Domain_Map (junction table) | MicroModules (AI-generated output)
+
 ```
 
 ---
@@ -79,7 +77,9 @@ python app.py
 
 ### 5. Open in browser
 ```
+
 http://127.0.0.1:5000
+
 ```
 
 ---
@@ -90,18 +90,22 @@ http://127.0.0.1:5000
 2. Select one or more knowledge domains (e.g. `#CRM`, `#Life_Insurance`)
 3. Click **SHRED & GENERATE MODULES**
 4. View the AI-generated 2-minute micro-modules on the right panel
-5. All uploads are saved and accessible in the Upload History section
+5. Each module includes **Key Takeaways** and a **Quiz** to reinforce learning
+6. Use **Browse by Domain** to explore modules across all uploaded documents
+7. All uploads are saved and accessible in the Upload History section
+
+---
+
+## Future Roadmap
+
+- **Module-level domain tagging** — AI assigns fine-grained tags per module, not just per document
+- **Spaced repetition** — Algorithmically schedule quiz reminders based on the Forgetting Curve
+- **Learning progress tracking** — Track each agent's quiz scores and knowledge gaps
+- **AI Q&A** — Allow agents to ask questions about any module content
 
 ---
 
 ## Project Structure
+```
 
-```
-kgi-knowledge-shredder/
-├── app.py              # Flask backend, API routes
-├── database.py         # SQLite setup and connection
-├── gemini_service.py   # Gemini AI integration
-├── templates/
-│   └── index.html      # Frontend UI
-└── README.md
-```
+kgi-knowledge-shredder/ ├── app.py # Flask backend, API routes ├── database.py # SQLite setup and connection ├── gemini_service.py # Gemini AI integration ├── templates/ │ └── index.html # Frontend UI ├── .env.example # API key template ├── requirements.txt # Python dependencies └── README.md

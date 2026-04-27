@@ -18,7 +18,20 @@ def generate_micro_modules(raw_text: str, domains: list) -> list:
 Selected domains: [{domain_str}].
 Break the text into 2-minute learning sprints.
 Return ONLY a valid JSON array, no markdown, no explanation.
-Format: [{{"title": "...", "content": "...", "reading_time_minutes": 2}}]
+Format:
+[
+  {{
+    "title": "Module title",
+    "content": "Full learning content for this 2-minute sprint.",
+    "key_takeaways": ["Point 1", "Point 2", "Point 3"],
+    "quiz": {{
+      "question": "A multiple choice question about this module",
+      "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
+      "answer": "A"
+    }},
+    "reading_time_minutes": 2
+  }}
+]
 Text: \"\"\"{raw_text}\"\"\""""
 
     response = client.models.generate_content(
@@ -29,4 +42,4 @@ Text: \"\"\"{raw_text}\"\"\""""
     try:
         return json.loads(raw)
     except:
-        return [{"title": "Module 1", "content": raw, "reading_time_minutes": 2}]
+        return [{"title": "Module 1", "content": raw, "key_takeaways": [], "quiz": None, "reading_time_minutes": 2}]
